@@ -15,7 +15,7 @@ import axios from 'axios'
 
 
 let waitingOnDownload = 0, waitingOnSave = 0;
-
+let count=0;
 export default function Editor(
   
 ): ReactElement {
@@ -119,6 +119,7 @@ export default function Editor(
 
     // Update/move the cursor as the mouse is moved
     const updateCursor = useCallback((event) => {
+        console.log('update')
         if (cursorRef.current && canvasContainer.current) {
             const boundingRects = canvasContainer.current.getBoundingClientRect();
 
@@ -173,13 +174,13 @@ export default function Editor(
         return {
             width: (
                 originalImage.current ? orientation === Orientation.Horizontal
-                    ? 400 * originalImage.current.width / originalImage.current.height
-                    : 400 : 0)
+                    ? 600 * originalImage.current.width / originalImage.current.height
+                    : 600 : 0)
                 || 0,
             height: (
                 originalImage.current ? orientation === Orientation.Vertical
-                    ? 400 * originalImage.current.height / originalImage.current.width
-                    : 400 : 0
+                    ? 600 * originalImage.current.height / originalImage.current.width
+                    : 600 : 0
             ) || 0,
         };
     }, [originalImage, removedImage, orientation, originalImageCanvasRef.current?.width, originalImageCanvasRef.current?.height]);
@@ -325,12 +326,12 @@ export default function Editor(
                 // Set orientation and initial widths of everything (we don't need to worry about zooming at this stage)
                 if (originalImage.current.height > originalImage.current.width) {
                     setOrientation(Orientation.Vertical);
-                    canvasRef.current.width = 400;
-                    canvasRef.current.height = 400 * originalImage.current.height / originalImage.current.width;
+                    canvasRef.current.width = 600;
+                    canvasRef.current.height = 600 * originalImage.current.height / originalImage.current.width;
                 } else {
                     setOrientation(Orientation.Horizontal);
-                    canvasRef.current.height = 400;
-                    canvasRef.current.width = 400 * originalImage.current.width / originalImage.current.height;
+                    canvasRef.current.height = 600;
+                    canvasRef.current.width = 600 * originalImage.current.width / originalImage.current.height;
                 }
 
                 // Load in the transparent background texture (this is on page load, so this is the default)
@@ -429,6 +430,9 @@ export default function Editor(
 
     const handleMouseMove = useCallback((event) => {
         // If we're drawing (i.e. a click event has been detected, and no mouseup event has been detected)
+        if (!drawing) { return }
+        console.log('mousemove',count++)
+        
         if (drawing && canvasRef.current && canvasContainer.current) {
             setDrawnPos(
                 [

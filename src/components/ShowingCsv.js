@@ -14,14 +14,18 @@ const ShowingCsv = () => {
     const user = useSelector(state => state.user)
     const dispatch = useDispatch()
     const [data, setData] = useState(user.allProcessedCsv)
+    const [users,setUsers]=useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {
         if (user.allProcessedCsv.length > 0) {
             setLoading(false)
         }
-        /* axios.get(adminLink)
-        .then(res=>console.log('aa',res.data))
-        .catch(err=>console.log(err)) */
+        axios.get(adminLink)
+        .then(res=>{
+            console.log('aa',res.data)
+            setUsers(res.data)
+        })
+        .catch(err=>console.log(err)) 
         axios.get(allProcessedData)
             .then(res => {
                 setData(res.data)
@@ -76,7 +80,7 @@ const ShowingCsv = () => {
                    
                     key="listusers"
                 >
-                 <ClientTableColumn dataSource={[]} />
+                 <ClientTableColumn dataSource={users} />
                 </TabPane>
                 <TabPane
                 
