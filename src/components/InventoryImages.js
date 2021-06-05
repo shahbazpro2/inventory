@@ -47,6 +47,7 @@ const InventoryImages = (props) => {
                     currentIndex={currentImage}
                     changeFun={changeFun}
                     onClose={closeImageViewer}
+                    link={props.link}
                 />
             )}
             <div style={{ maxHeight: '70vh', overflowY: 'scroll' }}>

@@ -92,7 +92,7 @@ const ShowingCsv = () => {
                
                 key="inventoryimages"
             >
-             <InventoryImages dataSource={dataSource()} />
+             <InventoryImages dataSource={dataSource()} link="/inventory-list" />
             </TabPane>
             </Tabs>
 

@@ -112,7 +112,7 @@ const Home = (props) => {
         }else if (active === '2') {
             return   <ClientTableColumn dataSource={users} />
         }else if (active === '3') {
-            return    <InventoryImages dataSource={dataSource()} />
+            return    <InventoryImages dataSource={dataSource()} link="/images" />
         }
         else if (active === '4') {
             return <ManualCutout />

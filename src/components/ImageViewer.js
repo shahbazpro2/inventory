@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { saveProcessedImage } from './../configurations/urls';
 import { triggerBase64Download } from 'react-base64-downloader';
 
-const ImageViewer = ({ current, changeFun, onClose, history }) => {
+const ImageViewer = ({ current, changeFun, onClose, history,link }) => {
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
@@ -18,7 +18,7 @@ const ImageViewer = ({ current, changeFun, onClose, history }) => {
         image = await axios.get(`${a.processed_image}`, { responseType: 'arraybuffer' })
         let processed = Buffer.from(image.data).toString('base64')
 
-        dispatch(sendToEditor({ orignalImage: `data:image/png;base64,${orignal}`, removedImage: `data:image/png;base64,${processed}`, link: '/inventory-list', imgName: a.processed_image.split("/")[8], dealerId: a.owner }))
+        dispatch(sendToEditor({ orignalImage: `data:image/png;base64,${orignal}`, removedImage: `data:image/png;base64,${processed}`, link:link, imgName: a.processed_image.split("/")[8], dealerId: a.owner }))
         history.push('/editor')
 
     }
