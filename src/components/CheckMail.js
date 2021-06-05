@@ -2,7 +2,6 @@ import React from 'react'
 import { Button } from 'antd';
 
 const CheckMail = ({reSendEmail,forgot}) => {
-    console.log('for',forgot)
     return (
         <div className="mt-3">
             {forgot?

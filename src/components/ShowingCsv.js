@@ -22,7 +22,6 @@ const ShowingCsv = () => {
         }
         axios.get(adminLink)
         .then(res=>{
-            console.log('aa',res.data)
             setUsers(res.data)
         })
         .catch(err=>console.log(err)) 

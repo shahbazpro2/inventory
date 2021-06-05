@@ -14,7 +14,6 @@ const InventoryImages = (props) => {
             fimg.push({ "img": d.editted_image,type:'rem', 'data': d })
         })
         setImgGroup(fimg)
-        console.log('call',fimg)
     }, [props.dataSource])
     useEffect(() => {
         imgGroup.length > 0 && setCurrentImage(imgGroup[currentIndex])
@@ -30,7 +29,6 @@ const InventoryImages = (props) => {
         setIsViewerOpen(false);
     };
     const changeFun = (val) => {
-        console.log(imgGroup.length,currentIndex+1,currentIndex-1)
        
         
         if(val==='prev'){
@@ -59,7 +57,7 @@ const InventoryImages = (props) => {
                         onClick={() => openImageViewer(index)}
                         width="300"
                         key={index}
-                        style={{ margin: '2px' }}
+                        style={{ margin: '2px',cursor:'pointer' }}
                         alt="" />
                 ))}
 

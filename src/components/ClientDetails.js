@@ -11,7 +11,6 @@ const ClientDetails = ({id}) => {
             
             let arr=[]
             arr.push(res.data)
-            console.log('aaaaa',arr)
             setData(arr)})
         .catch(err=>console.log(err))
     },[])
