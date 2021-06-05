@@ -13,10 +13,14 @@ const { TabPane } = Tabs;
 const ShowingCsv = () => {
     const user = useSelector(state => state.user)
     const dispatch = useDispatch()
-    const [data, setData] = useState(user.allProcessedCsv)
+    const [fetch,setFetch]=useState(false)
+    const [data, setData] = useState([])
     const [users,setUsers]=useState([])
     const [loading, setLoading] = useState(true)
     useEffect(() => {
+        console.log('calling')
+        setLoading(true)
+        setData([])
         if (user.allProcessedCsv.length > 0) {
             setLoading(false)
         }
@@ -27,19 +31,31 @@ const ShowingCsv = () => {
         .catch(err=>console.log(err)) 
         axios.get(allProcessedData)
             .then(res => {
-                setData(res.data)
-                dispatch(setAllProcessedCsv(res.data))
+                console.log('res.',res.data)
+                const data=res.data
+                let arr=[]
+                data.length > 0 && data.forEach((d, i) => {
+                    if (d.images) {
+                        d.images.forEach(img => {
+                            arr.push({ ...d, 'images': '', 'editted_image': `${imageLink}${img.editted_image}`, 'original_image': `${imageLink}${img.original_image}`, 'processed_image': `${imageLink}${img.processed_image}` })
+                        })
+                    } else {
+                        arr.push(d)
+                    }
+                })
+                setData(arr)
+                /* dispatch(setAllProcessedCsv(res.data)) */
                 setLoading(false)
-
+                setFetch(false)
             })
             .catch(err => {
                 console.log(err)
                 setLoading(false)
             })
-    }, [])
+    }, [fetch])
 
 
-    const dataSource = () => {
+    /* const dataSource = () => {
         let arr = []
         data.length > 0 && data.forEach((d, i) => {
             if (d.images) {
@@ -51,7 +67,7 @@ const ShowingCsv = () => {
             }
         })
         return arr
-    }
+    } */
     return (
         <>
              <Tabs defaultActiveKey="client">
@@ -66,7 +82,7 @@ const ShowingCsv = () => {
                    
                     key="inventory"
                 >
-                   <TableColumn dataSource={dataSource()} user={user} loading={loading} />
+                 {<TableColumn dataSource={data} setFetch={()=>setFetch(true)} user={user} loading={loading} />}
                 </TabPane>
                 <TabPane
                 
@@ -79,7 +95,7 @@ const ShowingCsv = () => {
                    
                     key="listusers"
                 >
-                 <ClientTableColumn dataSource={users} />
+                {<ClientTableColumn dataSource={users} loading={loading} />}
                 </TabPane>
                 <TabPane
                 
@@ -92,7 +108,7 @@ const ShowingCsv = () => {
                
                 key="inventoryimages"
             >
-             <InventoryImages dataSource={dataSource()} link="/inventory-list" />
+             <InventoryImages dataSource={data} setFetch={()=>setFetch(true)} link="/inventory-list" />
             </TabPane>
             </Tabs>
 

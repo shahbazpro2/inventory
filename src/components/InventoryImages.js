@@ -29,8 +29,6 @@ const InventoryImages = (props) => {
         setIsViewerOpen(false);
     };
     const changeFun = (val) => {
-       
-        
         if(val==='prev'){
             if((currentIndex-1)<0) return
             setCurrentIndex(currentIndex-1)
@@ -44,10 +42,11 @@ const InventoryImages = (props) => {
             {(isViewerOpen && currentImage!==null) && (
                 <ImageViewer
                     current={currentImage}
-                    currentIndex={currentImage}
+                    currentIndex={currentIndex}
                     changeFun={changeFun}
                     onClose={closeImageViewer}
                     link={props.link}
+                    setFetch={props.setFetch}
                 />
             )}
             <div style={{ maxHeight: '70vh', overflowY: 'scroll' }}>
@@ -63,20 +62,6 @@ const InventoryImages = (props) => {
                 ))}
 
 
-                {/* <Image.PreviewGroup >
-     {imgGroup.map(data=>{
-      return <Image
-      preview={{
-        onVisibleChange: (prev, curr) => console.log(prev, curr)
-      }}
-        onClick={()=>imgFun(data)}
-        key={data.img}
-        width={200}
-        src={data.img}
-      />
-     })}
-      
-    </Image.PreviewGroup> */}
             </div>
         </>
     )

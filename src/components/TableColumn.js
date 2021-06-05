@@ -28,28 +28,43 @@ class TableColumn extends React.Component {
     };
 
     componentDidMount() {
+        console.log('cdm', this.props.dataSource)
         this.setState({ source: this.props.dataSource })
+        const fimg = []
+        this.props.dataSource.forEach(d => {
+            fimg.push({ "img": d.editted_image, type: 'rem', 'data': d })
+        })
+        this.setState({ imgGroup: fimg })
 
     }
+    objectsEqual = (o1, o2) =>
+        typeof o1 === 'object' && Object.keys(o1).length > 0
+            ? Object.keys(o1).length === Object.keys(o2).length
+            && Object.keys(o1).every(p => this.objectsEqual(o1[p], o2[p]))
+            : o1 === o2;
     componentDidUpdate(prevPros, prevState) {
-        if (prevPros.dataSource !== prevState.source) {
+        console.log(prevPros.dataSource, this.props.dataSource)
+        if (prevPros.dataSource.length !== this.props.dataSource.length) {
             this.setState({ source: this.props.dataSource })
             const fimg = []
             this.props.dataSource.forEach(d => {
-                fimg.push({ "img": d.original_image, type: 'org', 'data': d })
                 fimg.push({ "img": d.editted_image, type: 'rem', 'data': d })
             })
             this.setState({ imgGroup: fimg })
-
-            console.log('pro', fimg)
         }
+
+
     }
     openImageViewer = (index) => {
-        console.log('index',index)
+        console.log('index', index)
         this.setState({ currentIndex: index, isViewerOpen: true });
+        this.updateImage(index)
     };
     closeImageViewer = () => {
         this.setState({ currentIndex: 0, currentImage: null, isViewerOpen: false })
+    }
+    updateImage = (index) => {
+        this.state.source.length > 0 && this.setState({ currentImage: this.state.imgGroup[index] })
     }
     changeFun = (val) => {
         const { currentIndex, imgGroup } = this.state
@@ -57,9 +72,11 @@ class TableColumn extends React.Component {
         if (val === 'prev') {
             if ((currentIndex - 1) < 0) return
             this.setState({ currentIndex: currentIndex - 1 })
+            this.updateImage(currentIndex - 1)
         } else if (val === 'next') {
             if ((currentIndex + 1) > imgGroup.length) return
             this.setState({ currentIndex: currentIndex + 1 })
+            this.updateImage(currentIndex + 1)
         }
     }
 
@@ -130,27 +147,57 @@ class TableColumn extends React.Component {
     openSingle = (val) => {
         this.props.history.push(`/client/${val}`)
     }
-
+    toDataURL = url => fetch(url)
+        .then(response => response.blob())
+        .then(blob => new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result)
+            reader.onerror = reject
+           reader.readAsDataURL(blob)
+        }))
+    getImage= async(image)=>{
+        return await this.toDataURL(image)
+        
+        
+    }
     columns = [
         {
             title: 'Orignal Image',
             dataIndex: 'original_image',
             key: 'original_image',
-            render: (text, record, index) => <Image
-                preview={true}
-                width={80}
-                src={record.original_image}
-            />
+            render: (image, record, index) =>
+                            {
+                              return <Image
+                                preview={true}
+                                width={80}
+                                style={{ cursor: 'pointer' }}
+                                src={record.original_image}
+                            /> 
+                                 
+                                
+                              /*   return  <Image
+                                preview={true}
+                                width={80}
+                                style={{ cursor: 'pointer' }}
+                                src={this.getImage(record.original_image)}
+                            />  */
+                            }
+                       
+                    
+
         },
         {
             title: 'Removed Image',
             dataIndex: 'editted_image',
             key: 'editted_image',
-            render: (text, record, index) => <Image
-                preview={true}
+            render: (image, record, index) => 
+            <img width={80}  style={{ margin: '2px',cursor:'pointer' }} src={record.editted_image} alt="img" onClick={()=>this.openImageViewer(index)} />
+           /*  <Image
+                preview={false}
                 width={80}
                 src={record.editted_image}
-            />
+                onClick={() => { this.openImageViewer(index) }}
+            /> */
         },
         {
             title: 'Dealer ID',
@@ -270,12 +317,20 @@ class TableColumn extends React.Component {
         let processed = Buffer.from(image.data).toString('base64')
 
         this.props.sendToEditor({ orignalImage: `data:image/png;base64,${orignal}`, removedImage: `data:image/png;base64,${processed}`, link: this.props.location.pathname, imgName: a.processed_image.split("/")[8], dealerId: a.owner }); this.props.history.push('/editor')
-
     }
 
     render() {
         return (
             <div>
+                {(this.state.isViewerOpen && this.state.currentImage !== null) && (
+                    <ImageViewer
+                        current={this.state.currentImage}
+                        changeFun={this.changeFun}
+                        onClose={this.closeImageViewer}
+                        link={"/inventory-list"}
+                        setFetch={this.props.setFetch}
+                    />
+                )}
                 {this.state.loading ? <div className="container">
                     <div className="d-flex align-items-center justify-content-center" style={{ height: '100vh' }}>
                         <Spin />
@@ -285,14 +340,7 @@ class TableColumn extends React.Component {
                 </div> :
                     <TableComp columns={this.columns} dataSource={this.state.source} loading={this.props.loading} />
                 }
-                {(this.state.isViewerOpen && this.state.currentImage !== null) && (
-                    <ImageViewer
-                        current={this.state.currentImage}
-                        currentIndex={this.state.currentImage}
-                        changeFun={this.changeFun}
-                        onClose={this.closeImageViewer}
-                    />
-                )}
+
             </div>
         )
     }

@@ -168,8 +168,8 @@ export default function Editor(
     // Init image blur
     const [imgBlur, setBlur] = useState(0);
 
-    // Calculate how big the container should be: if the image is landscape, make the width 400px and the height
-    // to match the aspect ratio; if the image is portrait, make the height 400px and match the width.
+    // Calculate how big the container should be: if the image is landscape, make the width 600px and the height
+    // to match the aspect ratio; if the image is portrait, make the height 600px and match the width.
     const divSizing = useMemo(() => {
         return {
             width: (

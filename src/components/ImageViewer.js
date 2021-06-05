@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import { saveProcessedImage } from './../configurations/urls';
 import { triggerBase64Download } from 'react-base64-downloader';
 
-const ImageViewer = ({ current, changeFun, onClose, history,link }) => {
+const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => {
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
@@ -36,10 +36,10 @@ const ImageViewer = ({ current, changeFun, onClose, history,link }) => {
         const {file}=options
         let b64 = await toBase64(file)
         b64 = b64.replace('data:image/png;base64,', '')
-        console.log(b64)
         axios.post(`${saveProcessedImage}${current.data.processed_image.split("/")[8]}/${current.data.owner}/`, {image_data:b64})
             .then(res => {
-                window.location.replace('/')
+                setFetch()
+                onClose()
             })
             .catch(err => console.log(err))
     }
@@ -59,7 +59,6 @@ const ImageViewer = ({ current, changeFun, onClose, history,link }) => {
     const download=()=>{
         console.log('download')
         toDataUrl(current.data.processed_image, function(myBase64) {
-            console.log(myBase64); // myBase64 is the base64 string
             triggerBase64Download(myBase64, 'background-removal-edit');
         });
         
