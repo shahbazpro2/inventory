@@ -993,14 +993,14 @@ export default function Editor(
                         </div>
                         <ul className="nav nav-tabs" id="myTab" role="tablist">
                             <li className="nav-item">
-                                <a className="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><h5><i className="fas fa-layer-group mr-2"></i>BACKGROUND</h5></a>
+                                <a className="nav-link " id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true"><h5><i className="fas fa-layer-group mr-2"></i>BACKGROUND</h5></a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false"><h5><i className="fas fa-paint-brush mr-2"></i>ERASER / RESTORE</h5></a>
+                                <a className="nav-link active" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false"><h5><i className="fas fa-paint-brush mr-2"></i>ERASER / RESTORE</h5></a>
                             </li>
                         </ul>
                         <div className="tab-content" id="myTabContent">
-                            <div className="tab-pane fade show" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div className="tab-pane" id="home" role="tabpanel" aria-labelledby="home-tab">
                                 <div className="p-3 text-center">
                                     <div className="mb-2 text-left">
                                         <small>Blur</small>
@@ -1082,7 +1082,7 @@ export default function Editor(
                                     </div>
                                 </div>
                             </div>
-                            <div className="tab-pane fade active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <div className="tab-pane fade show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                                 <div className="p-3 text-center">
                                     <div className="toggle-btn">
                                         <button className={classnames("erase", { 'eractive': erase })} onClick={() => { setErase(true); setMode(ToolMode.Eraser) }}>Erase</button>
