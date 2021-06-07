@@ -1,5 +1,5 @@
 import { CloseOutlined, LeftCircleFilled, RightCircleFilled, UploadOutlined } from '@ant-design/icons'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios'
 import { Spin, Upload, Button } from 'antd';
 import { useDispatch } from 'react-redux';
@@ -10,7 +10,19 @@ import { triggerBase64Download } from 'react-base64-downloader';
 
 const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => {
     const [loading, setLoading] = useState(false)
+    const [pending,setPending]=useState('')
     const dispatch = useDispatch()
+
+    useEffect(()=>{
+        document.addEventListener('keydown', function(event){
+            if(event.keyCode===39){
+                changeFun('next')
+            }else if(event.keyCode===37){
+                changeFun('prev')
+            }
+            console.log(`Key: ${event.key} with keycode ${event.keyCode} has been pressed`);
+        })
+    },[])
 
     const openEditor = async (a) => {
         let image = await axios.get(`${a.original_image}`, { responseType: 'arraybuffer' });
@@ -33,15 +45,24 @@ const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => 
         reader.onerror = error => reject(error);
     });
     const uploadImage = async(options) => {
+        setPending('upload')
         const {file}=options
         let b64 = await toBase64(file)
         b64 = b64.replace('data:image/png;base64,', '')
         axios.post(`${saveProcessedImage}${current.data.processed_image.split("/")[8]}/${current.data.owner}/`, {image_data:b64})
             .then(res => {
+                console.log('res',res.data)
                 setFetch()
+                setPending('')
                 onClose()
+                window.location.reload()
+                
+
             })
-            .catch(err => console.log(err))
+            .catch(err => {
+                console.log(err)
+                setPending('')
+            })
     }
     function toDataUrl(url, callback) {
         var xhr = new XMLHttpRequest();
@@ -57,9 +78,11 @@ const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => 
         xhr.send();
     }
     const download=()=>{
+        setPending('download')
         console.log('download')
         toDataUrl(current.data.processed_image, function(myBase64) {
             triggerBase64Download(myBase64, 'background-removal-edit');
+            setPending('')
         });
         
     }
@@ -82,7 +105,7 @@ const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => 
                         <LeftCircleFilled />
                     </div>
                     <div className="topbar">
-                        <div className="title">DealerId: {current.data.dealer_id && current.data.dealer_id}</div>
+                        <div className="title">DealerId: {current.data.owner && current.data.owner}</div>
                     </div>
 
                     <img width="500" src={current.img} alt="img" />
@@ -92,13 +115,13 @@ const ImageViewer = ({ current, changeFun, onClose, history,link,setFetch }) => 
                     </div>
                     {current.type === 'rem' && <div className="d-flex bottombar">
                         <button className="btm btn-sm btn-primary" onClick={() => openEdit(current.data)}>Edit</button>
-                        <button className="btm btn-sm btn-success mx-3" onClick={download}>Download</button>
+                        <button className="btm btn-sm btn-success mx-3" disabled={pending==='download'} onClick={download}>Download</button>
                         <Upload
                             customRequest={uploadImage}
                             maxCount={1}
                             showUploadList={false}
                         >
-                            <Button icon={<UploadOutlined />}>Replace</Button>
+                            <Button loading={pending==='upload'} icon={<UploadOutlined />}>Replace</Button>
                         </Upload>
                     </div>
                     }

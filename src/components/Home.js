@@ -27,24 +27,35 @@ const Home = (props) => {
     const [data,setData]=useState([])
     const [collapsed, setCollapsed] = useState(false);
     const [active, setActive] = useState(null);
+    const [loading,setLoading]=useState(true)
+    const [loadingUsers,setLoadingUsers]=useState(true)
     const { pathname } = useLocation();
     const fetchUsers=()=>{
         axios.get(adminLink)
         .then(res=>{
+            setLoadingUsers(false)
             setUsers(res.data)
+        })
+        .catch(err=>{
+            setLoadingUsers(false)
+            console.log(err)
         })
     }
     const fetchImages=()=>{
+        
         axios.get(allProcessedData)
             .then(res => {
-                setData(res.data)
-                dispatch(setAllProcessedCsv(res.data))
+                console.log('pdata',dataSource(res.data))
+                setData(dataSource(res.data))
+                setLoading(false)
+                //dispatch(setAllProcessedCsv(res.data))
             })
             .catch(err => {
+                setLoading(false)
                 console.log(err)
             })
     }
-    const dataSource = () => {
+    const dataSource = (data) => {
         let arr = []
         data.length > 0 && data.forEach((d, i) => {
             if (d.images) {
@@ -57,17 +68,23 @@ const Home = (props) => {
         })
         return arr
     }
+    useEffect(()=>{
+
+    console.log('fetchin')
+        fetchUsers()
+        fetchImages()
+    },[pathname])
     useEffect(() => {
         /* if (pathname === '/clients') {
             setActive('1')
         } else */ 
-        if (pathname === '/inventory-list') {
+        if (pathname === '/inventory-list' || pathname==='/listusers' || pathname==='/inventory-images' || pathname==='/inventory-summary') {
             setActive('1')
         }else if(pathname==='/users'){
             fetchUsers()
             setActive('2')
         }else if(pathname==='/images'){
-            fetchImages()
+            
             setActive('3')
         }else if (pathname === '/cutout') {
             setActive('4')
@@ -108,11 +125,11 @@ const Home = (props) => {
         } else  */
         console.log(active)
         if (active === '1') {
-            return  <ShowingCsv />
+            return  <ShowingCsv data={data} users={users} loadingUsers={loadingUsers} loading={loading} />
         }else if (active === '2') {
-            return   <ClientTableColumn dataSource={users} />
+            return   <ClientTableColumn dataSource={users} loadingUsers={loadingUsers} />
         }else if (active === '3') {
-            return    <InventoryImages dataSource={dataSource()} link="/images" />
+            return    <InventoryImages dataSource={data} link="/images" loading={loading} />
         }
         else if (active === '4') {
             return <ManualCutout />

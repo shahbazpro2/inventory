@@ -144,7 +144,7 @@ class ClientTableColumn extends React.Component {
             <div>
 
                 {/* <Editor original={this.state.originalImage} removed={this.state.removedImage} /> */}
-                <TableComp scrollBar={false} columns={this.columns} dataSource={this.props.dataSource} />
+                <TableComp scrollBar={false} loading={this.props.loading} columns={this.columns} dataSource={this.props.dataSource} />
 
             </div>
         )

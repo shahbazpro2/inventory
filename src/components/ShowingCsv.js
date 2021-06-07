@@ -1,115 +1,84 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react'
 import TableColumn from './TableColumn';
-import { adminLink, allProcessedData, imageLink } from './../configurations/urls';
-import { useSelector, useDispatch } from 'react-redux';
-import { setAllProcessedCsv } from '../redux/actions';
-import { Menu, Tabs } from 'antd';
-import { FileImageOutlined, FundOutlined, HddOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
-import ListUsers from './ListUsers';
+import { useSelector } from 'react-redux';
+import { Tabs } from 'antd';
+import { FileImageOutlined, FundOutlined, UnorderedListOutlined, UserOutlined } from '@ant-design/icons';
 import ClientTableColumn from './ClientTableColumn';
 import InventoryImages from './InventoryImages';
+import { useLocation,useHistory } from 'react-router-dom';
+import SummaryTable from './SummaryTable';
 const { TabPane } = Tabs;
-const ShowingCsv = () => {
+const ShowingCsv = ({ data, loading, users, loadingUsers }) => {
     const user = useSelector(state => state.user)
-    const dispatch = useDispatch()
-    const [fetch,setFetch]=useState(false)
-    const [data, setData] = useState([])
-    const [users,setUsers]=useState([])
-    const [loading, setLoading] = useState(true)
+    const [active, setActive] = useState(null);
+    const [fetch, setFetch] = useState(false)
+    const { pathname } = useLocation();
+    const history = useHistory();
+
     useEffect(() => {
-        console.log('calling')
-        setLoading(true)
-        setData([])
-        if (user.allProcessedCsv.length > 0) {
-            setLoading(false)
-        }
-        axios.get(adminLink)
-        .then(res=>{
-            setUsers(res.data)
-        })
-        .catch(err=>console.log(err)) 
-        axios.get(allProcessedData)
-            .then(res => {
-                console.log('res.',res.data)
-                const data=res.data
-                let arr=[]
-                data.length > 0 && data.forEach((d, i) => {
-                    if (d.images) {
-                        d.images.forEach(img => {
-                            arr.push({ ...d, 'images': '', 'editted_image': `${imageLink}${img.editted_image}`, 'original_image': `${imageLink}${img.original_image}`, 'processed_image': `${imageLink}${img.processed_image}` })
-                        })
-                    } else {
-                        arr.push(d)
-                    }
-                })
-                setData(arr)
-                /* dispatch(setAllProcessedCsv(res.data)) */
-                setLoading(false)
-                setFetch(false)
-            })
-            .catch(err => {
-                console.log(err)
-                setLoading(false)
-            })
-    }, [fetch])
+       console.log('pathname',pathname)
+       setActive(pathname.replace('/',""))
+    }, [pathname])
 
-
-    /* const dataSource = () => {
-        let arr = []
-        data.length > 0 && data.forEach((d, i) => {
-            if (d.images) {
-                d.images.forEach(img => {
-                    arr.push({ ...d, 'images': '', 'editted_image': `${imageLink}${img.editted_image}`, 'original_image': `${imageLink}${img.original_image}`, 'processed_image': `${imageLink}${img.processed_image}` })
-                })
-            } else {
-                arr.push(d)
-            }
-        })
-        return arr
-    } */
+    const changeTab=(tab)=>{
+        history.push(`/${tab}`)
+        setActive(tab)
+    }
     return (
         <>
-             <Tabs defaultActiveKey="client">
+            <Tabs defaultActiveKey="client" activeKey={active} onChange={changeTab}>
                 <TabPane
-                
+
                     tab={
                         <span>
                             <UnorderedListOutlined />
               Inventory Lists
             </span>
                     }
-                   
-                    key="inventory"
+
+                    key="inventory-list"
                 >
-                 {<TableColumn dataSource={data} setFetch={()=>setFetch(true)} user={user} loading={loading} />}
+                    {<TableColumn dataSource={data} setFetch={() => setFetch(true)} user={user} loading={loading} />}
                 </TabPane>
                 <TabPane
-                
+
                     tab={
                         <span>
                             <UserOutlined />
               ListUsers
             </span>
                     }
-                   
+
                     key="listusers"
                 >
-                {<ClientTableColumn dataSource={users} loading={loading} />}
+                    {<ClientTableColumn dataSource={users} loading={loadingUsers} />}
                 </TabPane>
                 <TabPane
-                
-                tab={
-                    <span>
-                        <FileImageOutlined /> 
+
+                    tab={
+                        <span>
+                            <FileImageOutlined />
           Inventory Images
         </span>
-                }
-               
-                key="inventoryimages"
-            >
-             <InventoryImages dataSource={data} setFetch={()=>setFetch(true)} link="/inventory-list" />
-            </TabPane>
+                    }
+
+                    key="inventory-images"
+                >
+                    <InventoryImages dataSource={data} loading={loading} setFetch={() => setFetch(true)} link="/inventory-images" />
+                </TabPane>
+                <TabPane
+
+                    tab={
+                        <span>
+                            <FundOutlined />
+          Summary
+        </span>
+                    }
+
+                    key="inventory-summary"
+                >
+                    <SummaryTable data={users} />
+                </TabPane>
             </Tabs>
 
         </>

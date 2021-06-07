@@ -28,7 +28,6 @@ class TableColumn extends React.Component {
     };
 
     componentDidMount() {
-        console.log('cdm', this.props.dataSource)
         this.setState({ source: this.props.dataSource })
         const fimg = []
         this.props.dataSource.forEach(d => {
@@ -43,7 +42,6 @@ class TableColumn extends React.Component {
             && Object.keys(o1).every(p => this.objectsEqual(o1[p], o2[p]))
             : o1 === o2;
     componentDidUpdate(prevPros, prevState) {
-        console.log(prevPros.dataSource, this.props.dataSource)
         if (prevPros.dataSource.length !== this.props.dataSource.length) {
             this.setState({ source: this.props.dataSource })
             const fimg = []
@@ -56,7 +54,6 @@ class TableColumn extends React.Component {
 
     }
     openImageViewer = (index) => {
-        console.log('index', index)
         this.setState({ currentIndex: index, isViewerOpen: true });
         this.updateImage(index)
     };
@@ -147,57 +144,48 @@ class TableColumn extends React.Component {
     openSingle = (val) => {
         this.props.history.push(`/client/${val}`)
     }
-    toDataURL = url => fetch(url)
-        .then(response => response.blob())
-        .then(blob => new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result)
-            reader.onerror = reject
-           reader.readAsDataURL(blob)
-        }))
-    getImage= async(image)=>{
-        return await this.toDataURL(image)
-        
-        
+    getBase64FromUrl = async (url) => {
+        const data = await fetch(url);
+        const blob = await data.blob();
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+                const base64data = reader.result;
+                resolve(base64data);
+            }
+        });
     }
     columns = [
         {
             title: 'Orignal Image',
             dataIndex: 'original_image',
             key: 'original_image',
-            render: (image, record, index) =>
-                            {
-                              return <Image
-                                preview={true}
-                                width={80}
-                                style={{ cursor: 'pointer' }}
-                                src={record.original_image}
-                            /> 
-                                 
-                                
-                              /*   return  <Image
-                                preview={true}
-                                width={80}
-                                style={{ cursor: 'pointer' }}
-                                src={this.getImage(record.original_image)}
-                            />  */
-                            }
-                       
-                    
+            render: (image, record, index) => {
+                return <Image
+                    preview={true}
+                    width={80}
+                    style={{ cursor: 'pointer' }}
+                    src={record.original_image}
+                />
+
+            }
+
+
 
         },
         {
             title: 'Removed Image',
             dataIndex: 'editted_image',
             key: 'editted_image',
-            render: (image, record, index) => 
-            <img width={80}  style={{ margin: '2px',cursor:'pointer' }} src={record.editted_image} alt="img" onClick={()=>this.openImageViewer(index)} />
-           /*  <Image
-                preview={false}
-                width={80}
-                src={record.editted_image}
-                onClick={() => { this.openImageViewer(index) }}
-            /> */
+            render: (image, record, index) =>
+                <img width={80} style={{ margin: '2px', cursor: 'pointer' }} src={record.editted_image} alt="img" onClick={() => this.openImageViewer(index)} />
+            /*  <Image
+                 preview={false}
+                 width={80}
+                 src={record.editted_image}
+                 onClick={() => { this.openImageViewer(index) }}
+             /> */
         },
         {
             title: 'Dealer ID',

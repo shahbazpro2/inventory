@@ -87,7 +87,9 @@ const App = (props) => {
            
           <PrivateRoute exact path="/inventory-list" component={Home} />
           <PrivateRoute exact path="/clients" component={ Home } />
-            
+          <PrivateRoute exact path="/listusers" component={Home} />
+          <PrivateRoute exact path="/inventory-images" component={Home} />
+          <PrivateRoute exact path="/inventory-summary" component={Home} />
           <PrivateRoute exact path="/cutout" component={ Home } />
           <PrivateRoute exact path="/users" component={ Home } />
           <PrivateRoute exact path="/images" component={ Home } />
