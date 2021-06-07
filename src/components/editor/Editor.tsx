@@ -1000,7 +1000,7 @@ export default function Editor(
                             </li>
                         </ul>
                         <div className="tab-content" id="myTabContent">
-                            <div className="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div className="tab-pane fade show" id="home" role="tabpanel" aria-labelledby="home-tab">
                                 <div className="p-3 text-center">
                                     <div className="mb-2 text-left">
                                         <small>Blur</small>
@@ -1082,7 +1082,7 @@ export default function Editor(
                                     </div>
                                 </div>
                             </div>
-                            <div className="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                            <div className="tab-pane fade active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                                 <div className="p-3 text-center">
                                     <div className="toggle-btn">
                                         <button className={classnames("erase", { 'eractive': erase })} onClick={() => { setErase(true); setMode(ToolMode.Eraser) }}>Erase</button>
