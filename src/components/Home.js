@@ -8,7 +8,8 @@ import {
     UploadOutlined,
     ScissorOutlined,
     UserOutlined,
-    FileImageOutlined
+    FileImageOutlined,
+    FundOutlined
 } from '@ant-design/icons';
 import ShowingCsv from './ShowingCsv';
 import ManualCutout from './ManualCutout';
@@ -19,6 +20,7 @@ import axios from 'axios'
 import ClientTableColumn from './ClientTableColumn';
 import { imageLink } from './../configurations/urls';
 import InventoryImages from './InventoryImages';
+import SummaryTable from './SummaryTable';
 const { Header, Sider, Content } = Layout;
 const Home = (props) => {
     const user = useSelector(state => state.user.user)
@@ -86,8 +88,12 @@ const Home = (props) => {
         }else if(pathname==='/images'){
             
             setActive('3')
-        }else if (pathname === '/cutout') {
+        }else if(pathname==='/admin-summary'){
+            
             setActive('4')
+        }
+        else if (pathname === '/cutout') {
+            setActive('5')
         } else {
             props.history.push('/inventory-list')
         }
@@ -112,8 +118,10 @@ const Home = (props) => {
         } else if (e.key === '3') {
             props.history.push('/images')
         }else if (e.key === '4') {
-            props.history.push('/cutout')
+            props.history.push('/admin-summary')
         }else if (e.key === '5') {
+            props.history.push('/cutout')
+        }else if (e.key === '6') {
             dispatch(logoutUser())
             window.location.replace('/login')
         }
@@ -125,13 +133,15 @@ const Home = (props) => {
         } else  */
         console.log(active)
         if (active === '1') {
-            return  <ShowingCsv data={data} users={users} loadingUsers={loadingUsers} loading={loading} />
+            return <ShowingCsv data={data} users={users} loadingUsers={loadingUsers} loading={loading} />
         }else if (active === '2') {
-            return   <ClientTableColumn dataSource={users} loadingUsers={loadingUsers} />
+            return <ClientTableColumn dataSource={users} loadingUsers={loadingUsers} />
         }else if (active === '3') {
-            return    <InventoryImages dataSource={data} link="/images" loading={loading} />
+            return <InventoryImages dataSource={data} link="/images" loading={loading} />
+        }else if (active === '4') {
+            return <SummaryTable data={users} />
         }
-        else if (active === '4') {
+        else if (active === '5') {
             return <ManualCutout />
         }
     }
@@ -165,10 +175,13 @@ const Home = (props) => {
                                 Inventory Images
             </Menu.Item>
                             
-                            <Menu.Item key="4" icon={<ScissorOutlined />}>
+                            <Menu.Item key="4" icon={<FundOutlined />}>
+                                Summary
+            </Menu.Item>
+            <Menu.Item key="5" icon={<ScissorOutlined />}>
                                 Manual Cutout
             </Menu.Item>
-                            <Menu.Item key="5" icon={<UploadOutlined />}>
+                            <Menu.Item key="6" icon={<UploadOutlined />}>
                                 Logout
             </Menu.Item>
                         </Menu>

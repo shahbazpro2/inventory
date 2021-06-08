@@ -772,7 +772,7 @@ export default function Editor(
             }
 
             // Download it (using an NPM module)
-            triggerBase64Download(canvasRef.current.toDataURL('image/png', 1.0), 'background-removal-edit');
+            triggerBase64Download(canvasRef.current.toDataURL('image/jpeg', 1.0), 'background-removal-edit');
 
             // 'Clear' the background, i.e. put the transparent grid back.
             if (backgroundIsTransparent) {

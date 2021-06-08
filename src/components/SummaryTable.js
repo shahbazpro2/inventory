@@ -9,8 +9,9 @@ const SummaryTable = ({data}) => {
     
     useEffect(()=>{
         getTbData()
-    },[])
+    },[data])
     const getTbData=async ()=>{
+        setLoading(true)
         let arr=[]
         for (const d of data){
            const res=await axios.get(`${getSummary}${d.dealer_id}/`)

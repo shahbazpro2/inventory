@@ -93,6 +93,7 @@ const App = (props) => {
           <PrivateRoute exact path="/cutout" component={ Home } />
           <PrivateRoute exact path="/users" component={ Home } />
           <PrivateRoute exact path="/images" component={ Home } />
+          <PrivateRoute exact path="/admin-summary" component={ Home } />
           <PrivateRoute exact path="/summary" component={ Home } />
           <PrivateRoute exact path="/editor" component={ Editor } />
           <PrivateRoute exact path="/client/:id" component={ SingleUser } />
