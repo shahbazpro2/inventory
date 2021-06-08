@@ -14,7 +14,9 @@ const SummaryTable = ({data}) => {
         let arr=[]
         for (const d of data){
            const res=await axios.get(`${getSummary}${d.dealer_id}/`)
-                arr.push({ last_24_hours_new:res.data.last_24_hours.new,
+                arr.push({ 
+                    dealerId:d.dealer_id,
+                    last_24_hours_new:res.data.last_24_hours.new,
                     last_24_hours_used:res.data.last_24_hours.used,
                     last_24_hours_total:res.data.last_24_hours.total,
                     last_7_days_new:res.data.last_7_days.new,
@@ -27,7 +29,6 @@ const SummaryTable = ({data}) => {
                     lifetime_used:res.data.lifetime.used,
                     lifetime_total:res.data.lifetime.total})
         }
-       console.log('setarr',arr)
     
     setTbData(arr)
         setLoading(false)
@@ -39,7 +40,7 @@ const SummaryTable = ({data}) => {
             dataIndex: 'client_name',
             key: 'client_name',
             render: (image, record, index) => {
-                return <span>Client {index+1}</span>
+                return <span>{record.dealerId}</span>
 
             }
 
