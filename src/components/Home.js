@@ -70,19 +70,16 @@ const Home = (props) => {
         })
         return arr
     }
-    useEffect(() => {
-
-        console.log('fetchin')
-        fetchUsers()
-        fetchImages()
-    }, [pathname])
+    
     useEffect(() => {
         /* if (pathname === '/clients') {
             setActive('1')
         } else */
+        fetchUsers()
+        fetchImages()
         console.log('path',pathname)
         if(pathname==='/'){
-            setActive('/inventory-list')
+            props.history.push('/inventory-list')
         }else
         setActive(pathname)
        
