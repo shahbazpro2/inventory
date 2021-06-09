@@ -14,7 +14,7 @@ import {
 import ShowingCsv from './ShowingCsv';
 import ManualCutout from './ManualCutout';
 import { useSelector, useDispatch } from 'react-redux';
-import { logoutUser, setAllProcessedCsv } from '../redux/actions';
+import { logoutUser } from '../redux/actions';
 import { adminLink, allProcessedData } from '../configurations/urls';
 import axios from 'axios'
 import ClientTableColumn from './ClientTableColumn';
@@ -25,29 +25,29 @@ const { Header, Sider, Content } = Layout;
 const Home = (props) => {
     const user = useSelector(state => state.user.user)
     const dispatch = useDispatch()
-    const [users,setUsers]=useState([])
-    const [data,setData]=useState([])
+    const [users, setUsers] = useState([])
+    const [data, setData] = useState([])
     const [collapsed, setCollapsed] = useState(false);
     const [active, setActive] = useState(null);
-    const [loading,setLoading]=useState(true)
-    const [loadingUsers,setLoadingUsers]=useState(true)
+    const [loading, setLoading] = useState(true)
+    const [loadingUsers, setLoadingUsers] = useState(true)
     const { pathname } = useLocation();
-    const fetchUsers=()=>{
+    const fetchUsers = () => {
         axios.get(adminLink)
-        .then(res=>{
-            setLoadingUsers(false)
-            setUsers(res.data)
-        })
-        .catch(err=>{
-            setLoadingUsers(false)
-            console.log(err)
-        })
+            .then(res => {
+                setLoadingUsers(false)
+                setUsers(res.data)
+            })
+            .catch(err => {
+                setLoadingUsers(false)
+                console.log(err)
+            })
     }
-    const fetchImages=()=>{
-        
+    const fetchImages = () => {
+
         axios.get(allProcessedData)
             .then(res => {
-                console.log('pdata',dataSource(res.data))
+                console.log('pdata', dataSource(res.data))
                 setData(dataSource(res.data))
                 setLoading(false)
                 //dispatch(setAllProcessedCsv(res.data))
@@ -70,37 +70,26 @@ const Home = (props) => {
         })
         return arr
     }
-    useEffect(()=>{
+    useEffect(() => {
 
-    console.log('fetchin')
+        console.log('fetchin')
         fetchUsers()
         fetchImages()
-    },[pathname])
+    }, [pathname])
     useEffect(() => {
         /* if (pathname === '/clients') {
             setActive('1')
-        } else */ 
-        if (pathname === '/inventory-list' || pathname==='/listusers' || pathname==='/inventory-images' || pathname==='/inventory-summary') {
-            setActive('1')
-        }else if(pathname==='/users'){
-            fetchUsers()
-            setActive('2')
-        }else if(pathname==='/images'){
-            
-            setActive('3')
-        }else if(pathname==='/admin-summary'){
-            
-            setActive('4')
-        }
-        else if (pathname === '/cutout') {
-            setActive('5')
-        } else {
-            props.history.push('/inventory-list')
-        }
+        } else */
+        console.log('path',pathname)
+        if(pathname==='/'){
+            setActive('/inventory-list')
+        }else
+        setActive(pathname)
+       
     }, [pathname])
 
     useEffect(() => {
-        if(user.is_admin===false){
+        if (user.is_admin === false) {
             props.history.push('/public')
         }
     }, [])
@@ -108,23 +97,16 @@ const Home = (props) => {
         setCollapsed(!collapsed)
     };
     const changeLink = (e) => {
+        console.log('e', e)
         /* if (e.key === '1') {
             props.history.push('/clients')
-        } else */ 
-        if (e.key === '1') {
-            props.history.push('/inventory-list')
-        } else if (e.key === '2') {
-            props.history.push('/users')
-        } else if (e.key === '3') {
-            props.history.push('/images')
-        }else if (e.key === '4') {
-            props.history.push('/admin-summary')
-        }else if (e.key === '5') {
-            props.history.push('/cutout')
-        }else if (e.key === '6') {
+        } else */
+
+         if (e.key === '/logout') {
             dispatch(logoutUser())
             window.location.replace('/login')
         }
+        props.history.push(e.key)
     }
     const showContent = () => {
         /* if (active === '1') {
@@ -132,56 +114,56 @@ const Home = (props) => {
             return <ListUsers user={user} />
         } else  */
         console.log(active)
-        if (active === '1') {
+        if (active === '/inventory-list' || active === '/listusers' || active === '/inventory-images' || active === '/inventory-summary') {
             return <ShowingCsv data={data} users={users} loadingUsers={loadingUsers} loading={loading} />
-        }else if (active === '2') {
+        } else if (active === '/users') {
             return <ClientTableColumn dataSource={users} loadingUsers={loadingUsers} />
-        }else if (active === '3') {
+        } else if (active === '/images') {
             return <InventoryImages dataSource={data} link="/images" loading={loading} />
-        }else if (active === '4') {
+        } else if (active === '/cutout') {
+            return <ManualCutout />
+        } else if (active === '/admin-summary') {
             return <SummaryTable data={users} />
         }
-        else if (active === '5') {
-            return <ManualCutout />
-        }
+
     }
     return (
         <>
             {active !== null ?
                 <Layout>
                     <Sider trigger={null} collapsible collapsed={collapsed}>
-                    <div className="logo">
-                    {!collapsed &&<div>
-                            <div>
-                            <small className="text-white mb-0">{user && user.dealer_name}</small>
-                            </div>
-                        <div>
-                        <small className="text-white mb-0">{user && user.dealer_id}</small>
+                        <div className="logo">
+                            {!collapsed && <div>
+                                <div>
+                                    <small className="text-white mb-0">{user && user.dealer_name}</small>
+                                </div>
+                                <div>
+                                    <small className="text-white mb-0">{user && user.dealer_id}</small>
+                                </div>
+
+                            </div>}
                         </div>
-                        
-                    </div> }
-                </div>
                         <Menu theme="dark" mode="inline" onClick={changeLink} defaultSelectedKeys={active}>
-                           {/*  <Menu.Item key="1" icon={<TeamOutlined />}>
+                            {/*  <Menu.Item key="1" icon={<TeamOutlined />}>
                                 Clients
             </Menu.Item> */}
-                            <Menu.Item key="1" icon={<UnorderedListOutlined />}>
+                            <Menu.Item key="/inventory-list" icon={<UnorderedListOutlined />}>
                                 Inventory Lists
             </Menu.Item>
-            <Menu.Item key="2" icon={<UserOutlined />}>
+                            <Menu.Item key="/users" icon={<UserOutlined />}>
                                 List Users
             </Menu.Item>
-            <Menu.Item key="3" icon={<FileImageOutlined />}>
+                            <Menu.Item key="/images" icon={<FileImageOutlined />}>
                                 Inventory Images
             </Menu.Item>
-                            
-                            <Menu.Item key="4" icon={<FundOutlined />}>
-                                Summary
-            </Menu.Item>
-            <Menu.Item key="5" icon={<ScissorOutlined />}>
+                            <Menu.Item key="/cutout" icon={<ScissorOutlined />}>
                                 Manual Cutout
             </Menu.Item>
-                            <Menu.Item key="6" icon={<UploadOutlined />}>
+                            <Menu.Item key="/admin-summary" icon={<FundOutlined />}>
+                                Summary
+            </Menu.Item>
+
+                            <Menu.Item key="/logout" icon={<UploadOutlined />}>
                                 Logout
             </Menu.Item>
                         </Menu>
@@ -207,7 +189,7 @@ const Home = (props) => {
 
                         </Content>
                     </Layout>
-                </Layout > : null }
+                </Layout > : null}
         </>
     )
 }
