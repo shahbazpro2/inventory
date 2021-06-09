@@ -14,8 +14,10 @@ const SummaryTable = ({data}) => {
         setLoading(true)
         let arr=[]
         for (const d of data){
+            console.log('d',d)
            const res=await axios.get(`${getSummary}${d.dealer_id}/`)
                 arr.push({ 
+                    dealerName:d.dealer_name,
                     dealerId:d.dealer_id,
                     last_24_hours_new:res.data.last_24_hours.new,
                     last_24_hours_used:res.data.last_24_hours.used,
@@ -40,6 +42,15 @@ const SummaryTable = ({data}) => {
             title: 'Client Name',
             dataIndex: 'client_name',
             key: 'client_name',
+            render: (image, record, index) => {
+                return <span>{record.dealerName}</span>
+
+            }
+
+        },{
+            title: 'Client Id',
+            dataIndex: 'client_id',
+            key: 'client_id',
             render: (image, record, index) => {
                 return <span>{record.dealerId}</span>
 
