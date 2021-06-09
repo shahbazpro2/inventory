@@ -14,7 +14,6 @@ const SummaryTable = ({data}) => {
         setLoading(true)
         let arr=[]
         for (const d of data){
-            console.log('d',d)
            const res=await axios.get(`${getSummary}${d.dealer_id}/`)
                 arr.push({ 
                     dealerName:d.dealer_name,
